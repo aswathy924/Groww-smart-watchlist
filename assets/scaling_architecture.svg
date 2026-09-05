@@ -1,0 +1,60 @@
+<svg viewBox="0 0 1000 600" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#FFFFFF; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Crisp, centered arrow marker matching the connector line color -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 2 L 8 5 L 1 8" fill="none" stroke="#71717A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- 1. 1M active clients -->
+  <g transform="translate(325, 28)">
+    <rect width="350" height="64" rx="12" fill="#444644"/>
+    <text x="175" y="40" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">1M active clients</text>
+  </g>
+
+  <!-- Arrow: Node 1 -> Node 2 -->
+  <line x1="500" y1="92" x2="500" y2="124" stroke="#71717A" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- 2. Anycast CDN -->
+  <g transform="translate(325, 126)">
+    <rect width="350" height="64" rx="12" fill="#0E4E8A"/>
+    <text x="175" y="40" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Anycast CDN</text>
+  </g>
+
+  <!-- Arrow: Node 2 -> Node 3 -->
+  <line x1="500" y1="190" x2="500" y2="222" stroke="#71717A" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- 3. Edge load balancers -->
+  <g transform="translate(325, 224)">
+    <rect width="350" height="64" rx="12" fill="#0E4E8A"/>
+    <text x="175" y="40" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Edge load balancers</text>
+  </g>
+
+  <!-- Arrow: Node 3 -> Node 4 -->
+  <line x1="500" y1="288" x2="500" y2="320" stroke="#71717A" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- 4. Stateless API services -->
+  <g transform="translate(180, 322)">
+    <rect width="640" height="82" rx="12" fill="#0C4F3F"/>
+    <text x="320" y="40" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Stateless API services</text>
+    <text x="320" y="64" text-anchor="middle" fill="#8CE1CD" font-size="15">FastAPI, autoscaled</text>
+  </g>
+
+  <!-- Branching Arrows: Node 4 -> Node 5A (Redis) & Node 5B (Postgres / ScyllaDB) -->
+  <path d="M 500 404 L 500 436 L 245 436 L 245 464" fill="none" stroke="#71717A" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <path d="M 500 404 L 500 436 L 755 436 L 755 464" fill="none" stroke="#71717A" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+
+  <!-- 5A. Redis cluster -->
+  <g transform="translate(50, 466)">
+    <rect width="390" height="82" rx="12" fill="#3B3687"/>
+    <text x="195" y="40" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Redis cluster</text>
+    <text x="195" y="64" text-anchor="middle" fill="#D4D4D8" font-size="15">In-memory tick cache, sub-ms</text>
+  </g>
+
+  <!-- 5B. Postgres / ScyllaDB -->
+  <g transform="translate(560, 466)">
+    <rect width="390" height="82" rx="12" fill="#752B19"/>
+    <text x="195" y="40" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Postgres / ScyllaDB</text>
+    <text x="195" y="64" text-anchor="middle" fill="#E4E4E7" font-size="15">User checkpoints, read replicas</text>
+  </g>
+</svg>

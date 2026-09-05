@@ -29,36 +29,9 @@ A naive `+2.0%` price change is **not** equally significant across different ass
 
 ### The Delta Engine Model
 
-```
-                    ┌────────────────────────────────────────────────────────┐
-                    │                    Market Feed Tick                    │
-                    └──────────────────────────┬─────────────────────────────┘
-                                               │
-                                               ▼
-                    ┌────────────────────────────────────────────────────────┐
-                    │      Personalized Checkpoint Comparison (P - P_seen)   │
-                    └──────────────────────────┬─────────────────────────────┘
-                                               │
-                        ┌──────────────────────┴──────────────────────┐
-                        ▼                                             ▼
-         ┌─────────────────────────────┐               ┌─────────────────────────────┐
-         │     Z-Score Volatility      │               │     Volume Surge Ratio      │
-         │  Z = |ΔP| / (σ_daily * √T)  │               │   VR = Vol / (AvgVol * t/T) │
-         └──────────────┬──────────────┘               └──────────────┬──────────────┘
-                        │                                             │
-                        └──────────────────────┬──────────────────────┘
-                                               │
-                                               ▼
-                    ┌────────────────────────────────────────────────────────┐
-                    │   Structural Breaks (52W High/Low, Intraday H/L Touch) │
-                    └──────────────────────────┬─────────────────────────────┘
-                                               │
-                                               ▼
-                    ┌────────────────────────────────────────────────────────┐
-                    │           Attention Tier & Plain-English AI Rationale  │
-                    │         🔴 HIGH  |  🟡 MODERATE  |  🟢 NORMAL          │
-                    └────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="./assets/delta_pipeline.svg" alt="Delta Engine Decision Pipeline" width="100%" />
+</p>
 
 #### 1. Time-Scaled Volatility & Z-Score
 Given annualized volatility $\sigma_{\text{annual}}$ and base price $P_0$, the daily volatility is:
@@ -101,28 +74,9 @@ Detects transitions across psychological market levels that occurred **since the
 
 ## Scaling to 1,000,000 Concurrent Users
 
-```
-                                      [ 1,000,000 Active Clients ]
-                                                   │
-                                                   ▼
-                                      [ Anycast CDN / Cloudflare ]
-                                                   │
-                                                   ▼
-                                  [ NGINX Edge Load Balancers (L7) ]
-                                                   │
-                                                   ▼
-                       ┌───────────────────────────────────────────────────────┐
-                       │       Stateless FastAPI Microservices (Autoscaled)    │
-                       └───────────────────────────┬───────────────────────────┘
-                                                   │
-                  ┌────────────────────────────────┴────────────────────────────────┐
-                  ▼                                                                 ▼
-      ┌───────────────────────┐                                         ┌───────────────────────┐
-      │   Redis Cluster L1    │                                         │   ScyllaDB / Postgres │
-      │  In-Memory Tick Cache │                                         │    User Checkpoints   │
-      │  (Sub-millisecond)    │                                         │  (Read-Replica Pool)  │
-      └───────────────────────┘                                         └───────────────────────┘
-```
+<p align="center">
+  <img src="./assets/scaling_architecture.svg" alt="1M Concurrent Users Architecture" width="100%" />
+</p>
 
 ### System Sizing Calculations
 - **Active Users**: 1,000,000 traders

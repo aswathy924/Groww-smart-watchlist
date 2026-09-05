@@ -1,0 +1,82 @@
+<svg viewBox="0 0 1000 720" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#FFFFFF; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Sharp, balanced arrow marker matching the connector line color -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 2 L 8 5 L 1 8" fill="none" stroke="#71717A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- 1. Market feed tick -->
+  <g transform="translate(325, 28)">
+    <rect width="350" height="68" rx="12" fill="#444644"/>
+    <text x="175" y="42" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Market feed tick</text>
+  </g>
+
+  <!-- Arrow: Node 1 -> Node 2 -->
+  <line x1="500" y1="96" x2="500" y2="132" stroke="#71717A" stroke-width="1.8" marker-end="url(#arrow)"/>
+
+  <!-- 2. Checkpoint comparison -->
+  <g transform="translate(260, 134)">
+    <rect width="480" height="84" rx="12" fill="#444644"/>
+    <text x="240" y="42" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Checkpoint comparison</text>
+    <text x="240" y="66" text-anchor="middle" fill="#D4D4D8" font-size="15">Current vs last-seen state</text>
+  </g>
+
+  <!-- Branching Arrows: Node 2 -> (Volatility & Volume Surge) -->
+  <path d="M 500 218 L 500 248 L 235 248 L 235 278" fill="none" stroke="#71717A" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <path d="M 500 218 L 500 248 L 765 248 L 765 278" fill="none" stroke="#71717A" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+
+  <!-- 3A. Volatility (z-score) -->
+  <g transform="translate(50, 280)">
+    <rect width="370" height="84" rx="12" fill="#3B3687"/>
+    <text x="185" y="42" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Volatility (z-score)</text>
+    <text x="185" y="66" text-anchor="middle" fill="#D4D4D8" font-size="15">Move size vs normal range</text>
+  </g>
+
+  <!-- 3B. Volume surge -->
+  <g transform="translate(580, 280)">
+    <rect width="370" height="84" rx="12" fill="#3B3687"/>
+    <text x="185" y="42" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Volume surge</text>
+    <text x="185" y="66" text-anchor="middle" fill="#D4D4D8" font-size="15">Current vs average volume</text>
+  </g>
+
+  <!-- Merging Arrows: (Volatility & Volume Surge) -> Structural breaks -->
+  <path d="M 235 364 L 235 394 L 500 394 L 500 424" fill="none" stroke="#71717A" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <path d="M 765 364 L 765 394 L 500 394" fill="none" stroke="#71717A" stroke-width="1.8" stroke-linejoin="round"/>
+
+  <!-- 4. Structural breaks -->
+  <g transform="translate(280, 426)">
+    <rect width="440" height="84" rx="12" fill="#3B3687"/>
+    <text x="220" y="42" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Structural breaks</text>
+    <text x="220" y="66" text-anchor="middle" fill="#D4D4D8" font-size="15">52-week highs and lows</text>
+  </g>
+
+  <!-- Fan-out Arrows: Structural breaks -> (High, Moderate, Normal) -->
+  <path d="M 500 510 L 500 540 L 165 540 L 165 570" fill="none" stroke="#71717A" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <line x1="500" y1="510" x2="500" y2="570" stroke="#71717A" stroke-width="1.8" marker-end="url(#arrow)"/>
+  <path d="M 500 510 L 500 540 L 835 540 L 835 570" fill="none" stroke="#71717A" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+
+  <!-- 5A. High -->
+  <g transform="translate(20, 572)">
+    <rect width="290" height="84" rx="12" fill="#781D22"/>
+    <text x="145" y="42" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">High</text>
+    <text x="145" y="66" text-anchor="middle" fill="#E4E4E7" font-size="15">Act now</text>
+  </g>
+
+  <!-- 5B. Moderate -->
+  <g transform="translate(355, 572)">
+    <rect width="290" height="84" rx="12" fill="#6E3D07"/>
+    <text x="145" y="42" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Moderate</text>
+    <text x="145" y="66" text-anchor="middle" fill="#E4E4E7" font-size="15">Worth a look</text>
+  </g>
+
+  <!-- 5C. Normal -->
+  <g transform="translate(690, 572)">
+    <rect width="290" height="84" rx="12" fill="#235313"/>
+    <text x="145" y="42" text-anchor="middle" fill="#FFFFFF" font-size="19" font-weight="600">Normal</text>
+    <text x="145" y="66" text-anchor="middle" fill="#E4E4E7" font-size="15">No action needed</text>
+  </g>
+
+  <!-- Footer subtitle -->
+  <text x="500" y="692" text-anchor="middle" fill="#9CA3AF" font-size="15" font-weight="400">Each tier ships with a plain-English rationale</text>
+</svg>
