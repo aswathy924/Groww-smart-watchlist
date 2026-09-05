@@ -22,6 +22,7 @@ class MarketState:
 
     # Pricing
     price: float = 0.0
+    last_valid_price: float = 0.0
     day_open: float = 0.0
     day_high: float = 0.0
     day_low: float = float("inf")

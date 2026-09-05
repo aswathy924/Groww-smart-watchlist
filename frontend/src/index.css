@@ -2,9 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+/* ── Base styling ─────────────────────────────────────────────── */
+
+* {
   margin: 0;
-  background-color: #0c0d10;
-  color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #0C0F17;
+  color: #F8FAFC;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #252F44;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #323D56;
+}
+
+/* ── Custom Utilities ─────────────────────────────────────────── */
+
+.price-up {
+  color: #00D09C;
+}
+
+.price-down {
+  color: #FF5C5C;
+}
+
+.badge-high {
+  background: rgba(255, 92, 92, 0.12);
+  color: #FF5C5C;
+  border: 1px solid rgba(255, 92, 92, 0.25);
+}
+
+.badge-moderate {
+  background: rgba(253, 186, 45, 0.12);
+  color: #FDBA2D;
+  border: 1px solid rgba(253, 186, 45, 0.25);
+}
+
+.badge-normal {
+  background: rgba(148, 163, 184, 0.08);
+  color: #94A3B8;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.badge-suspect {
+  background: rgba(253, 186, 45, 0.14);
+  color: #FDBA2D;
+  border: 1px solid rgba(253, 186, 45, 0.35);
+}
+
+.feed-live {
+  background: rgba(0, 208, 156, 0.1);
+  color: #00D09C;
+  border: 1px solid rgba(0, 208, 156, 0.22);
+}
+
+.feed-delayed {
+  background: rgba(253, 186, 45, 0.1);
+  color: #FDBA2D;
+  border: 1px solid rgba(253, 186, 45, 0.22);
+}
+
+.feed-stale {
+  background: rgba(255, 92, 92, 0.1);
+  color: #FF5C5C;
+  border: 1px solid rgba(255, 92, 92, 0.22);
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.dot-pulse {
+  animation: dotPulse 2s ease-in-out infinite;
 }

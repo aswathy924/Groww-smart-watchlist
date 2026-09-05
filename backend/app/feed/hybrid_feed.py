@@ -186,6 +186,13 @@ class HybridFeed(BaseMarketFeed):
         rng: np.random.Generator,
     ) -> None:
 
+        # ── Trading Halt check: pause price movements if symbol is halted
+        if state.is_halted:
+            state.last_tick_time = tick_time
+            state.feed_lag_ms = 0.0
+            state.feed_status = "LIVE"
+            return
+
         # ── Out-of-order tick shield 
         if tick_time <= state.last_tick_time:
             logger.debug("Rejected out-of-order tick for %s (tick_time=%s ≤ last=%s)",
@@ -198,42 +205,65 @@ class HybridFeed(BaseMarketFeed):
             self._pending_bad_tick[symbol] = False
             return
 
+        # ── Self-healing bad-tick filter: restore true price if previous tick was suspect
+        if state.tick_quality in ("SUSPECT_TICK", "UNVERIFIED_DATA"):
+            if state.last_valid_price > 0:
+                state.price = state.last_valid_price
+            state.tick_quality = "VALID"
+            logger.info("Restored %s price to last valid level: %.2f", symbol, state.price)
+
         # ── Retrieve instrument parameters for GBM 
         params = INSTRUMENT_CATALOG.get(symbol)
         if params is None:
             return
-        _, _, _, sigma_annual, avg_vol, _, _ = params
+        _, _, base_price, sigma_annual, avg_vol, _, _ = params
 
-        # ── GBM parameters (tick-scaled) 
-        dt = TICK_INTERVAL_SEC / TRADING_SECONDS_PER_DAY
-        mu = 0.0           # Zero drift for simulation neutrality
-        sigma_dt = sigma_annual * math.sqrt(dt)
+        # ── Realistic trading activity: ~40% chance of an executed trade tick per second per stock
+        # In real markets, not every symbol trades every single second
+        if rng.random() > 0.45:
+            # No price change on this tick, just slight volume accumulation
+            per_tick_base_vol = avg_vol / TRADING_SECONDS_PER_DAY
+            state.volume += per_tick_base_vol * rng.uniform(0.2, 0.8)
+            state.last_tick_time = tick_time
+            state.tick_quality = "VALID"
+            state.feed_lag_ms = 0.0
+            state.feed_status = "LIVE"
+            return
 
-        # Standard GBM
+        # ── Calibrated realistic micro-tick volatility 
+        # Mean-reverting Ornstein-Uhlenbeck drift towards base price (prevents endless 30% drift)
+        theta = 0.005  # Mean reversion speed
+        ou_drift = -theta * (state.price - base_price) / base_price
+
+        # Realistic tick volatility (~1.5-3 basis points per tick)
+        tick_sigma = (sigma_annual / math.sqrt(TRADING_SECONDS_PER_DAY)) * 0.35
         Z = rng.standard_normal()
-        drift = (mu - 0.5 * sigma_annual**2) * dt
-        diffusion = sigma_dt * Z
-        log_return = drift + diffusion
+        log_return = ou_drift + (tick_sigma * Z)
 
-        # Jump diffusion (Merton-style) 
-        jump_prob = JUMP_PROBABILITY_PER_DAY * dt
-        if rng.random() < jump_prob:
-            jump_log = rng.normal(JUMP_MU, JUMP_SIGMA)
-            log_return += jump_log
+        # Hackathon Pacing: Natural Poisson market events occur ~every 45-75 seconds across the watchlist
+        # ~1.2% chance per tick that a stock experiences an organic news/breakout event (±1.5% to ±3.2% jump)
+        is_organic_surge = False
+        if rng.random() < 0.012:
+            is_organic_surge = True
+            jump_direction = 1.0 if rng.random() > 0.4 else -1.0
+            jump_magnitude = rng.uniform(0.015, 0.032) * jump_direction
+            log_return += jump_magnitude
 
-        #  New price 
-        new_price = round(state.price * math.exp(log_return), 2)
-        new_price = max(new_price, 0.05)   # Floor at 5p to avoid zero/negative
+        # Calculate new price with NSE standard 5-paise (₹0.05) tick quantization
+        raw_price = state.price * math.exp(log_return)
+        new_price = round(round(raw_price / 0.05) * 0.05, 2)
+        new_price = max(new_price, 0.05)
 
-        # Volume (log-normal, correlated with |Z| price move) 
+        # Volume (amplified during organic surges or manual injections)
         per_tick_base_vol = avg_vol / TRADING_SECONDS_PER_DAY
-        vol_noise = rng.lognormal(0.0, 0.5)
-        price_vol_amplifier = 1.0 + abs(Z) * 0.3
+        vol_noise = rng.lognormal(0.0, 0.3)
+        price_vol_amplifier = 2.8 if is_organic_surge else (1.0 + abs(Z) * 0.2)
         vol_multiplier = self._volume_multipliers.pop(symbol, 1.0)
         tick_volume = per_tick_base_vol * vol_noise * price_vol_amplifier * vol_multiplier
 
-        # Apply updates 
+        # Apply updates
         state.price = new_price
+        state.last_valid_price = new_price
         state.volume += tick_volume
         state.day_high = max(state.day_high, new_price)
         state.day_low = min(state.day_low, new_price)
@@ -249,16 +279,17 @@ class HybridFeed(BaseMarketFeed):
         tick_time: datetime,
     ) -> None:
         """
-        Apply a +20% bad tick tagged as SUSPECT_TICK.
-
+        Apply a +20% bad tick tagged as UNVERIFIED_DATA.
+        Preserves last_valid_price so subsequent ticks self-heal.
         """
+        state.last_valid_price = state.price
         bad_price = round(state.price * 1.20, 2)   # +20% spike
         # NOTE: intentionally tiny volume — no market depth to support this move
         state.price = bad_price
         state.last_tick_time = tick_time
-        state.tick_quality = "SUSPECT_TICK"
+        state.tick_quality = "UNVERIFIED_DATA"
         state.feed_status = "LIVE"
-        logger.warning("BAD TICK applied to %s: price=%.2f (SUSPECT_TICK)", symbol, bad_price)
+        logger.warning("BAD TICK applied to %s: price=%.2f (UNVERIFIED_DATA, suppressed)", symbol, bad_price)
 
     # ------------------------------------------------------------------
     # Injector hooks (called by feed/injector.py)
@@ -289,6 +320,31 @@ class HybridFeed(BaseMarketFeed):
             raise ValueError(f"Symbol {sym!r} not tracked by HybridFeed")
         self._pending_bad_tick[sym] = True
         logger.info("BAD_TICK queued for %s", sym)
+
+    def inject_trading_halt(self, symbol: str, duration_seconds: int = 45) -> None:
+        """Halt trading for the target symbol with automatic cooling window (45s)."""
+        sym = symbol.upper()
+        if sym not in self._state:
+            raise ValueError(f"Symbol {sym!r} not tracked by HybridFeed")
+        self._state[sym].is_halted = True
+        logger.info("TRADING_HALT injected for %s (auto-resumes in %ds)", sym, duration_seconds)
+
+        # Schedule auto-resume after cooling period
+        async def _auto_resume():
+            await asyncio.sleep(duration_seconds)
+            if sym in self._state and self._state[sym].is_halted:
+                self._state[sym].is_halted = False
+                logger.info("TRADING_HALT cooled down: trading auto-resumed for %s", sym)
+
+        asyncio.create_task(_auto_resume(), name=f"halt-cooldown-{sym}")
+
+    def inject_resume_trading(self, symbol: str) -> None:
+        """Resume trading for the target symbol."""
+        sym = symbol.upper()
+        if sym not in self._state:
+            raise ValueError(f"Symbol {sym!r} not tracked by HybridFeed")
+        self._state[sym].is_halted = False
+        logger.info("RESUME_TRADING injected for %s", sym)
 
     async def inject_feed_delay(self, duration_seconds: int) -> None:
         """

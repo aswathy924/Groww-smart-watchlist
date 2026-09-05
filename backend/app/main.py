@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import AsyncSessionLocal, init_db
 from app.feed.injector import FeedInjector
 from app.routers import test as test_router
+from app.routers import watchlist as watchlist_router
+from app.routers import system as system_router
 
 # ---------------------------------------------------------------------------
 # Logging configuration
@@ -126,10 +128,11 @@ app.add_middleware(
 )
 
 # ---------------------------------------------------------------------------
-# Routers — Phase 1 exposes only the test injection endpoint.
-# Phase 2 will add: watchlist, checkpoint, system routers.
+# Routers
 # ---------------------------------------------------------------------------
-app.include_router(test_router.router)
+app.include_router(watchlist_router.router)   # Phase 2: /api/watchlist/*
+app.include_router(system_router.router)      # Phase 2: /api/system/*
+app.include_router(test_router.router)        # Phase 1: /api/test/*
 
 
 # ---------------------------------------------------------------------------

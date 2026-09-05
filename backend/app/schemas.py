@@ -21,7 +21,8 @@ class FeedStatus(str, Enum):
 class TickQuality(str, Enum):
     """Per-tick data quality assessment."""
     VALID = "VALID"
-    SUSPECT_TICK = "SUSPECT_TICK"   # Single-tick spike > 15% without volume support
+    SUSPECT_TICK = "SUSPECT_TICK"       # Single-tick spike > 15% without depth
+    UNVERIFIED_DATA = "UNVERIFIED_DATA" # Suppressed from alert pipeline
 
 
 class AttentionTier(str, Enum):
@@ -37,6 +38,8 @@ class AnomalyType(str, Enum):
     VOLUME_EXPLOSION = "volume_explosion"
     BAD_TICK = "bad_tick"
     FEED_DELAY = "feed_delay"
+    TRADING_HALT = "trading_halt"
+    RESUME_TRADING = "resume_trading"
 
 
 # ---------------------------------------------------------------------------
@@ -171,3 +174,120 @@ class APIResponse(BaseModel):
     success: bool = True
     message: str = "OK"
     data: Optional[Any] = None
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: Watchlist API response models
+# ---------------------------------------------------------------------------
+
+class WatchlistRow(BaseModel):
+    """
+    A single row in the main watchlist table — combines live market data,
+    delta engine output, and feed metadata for the frontend table view.
+    """
+    # Identity
+    symbol: str
+    name: str
+    sector: str = ""
+
+    # Live pricing
+    current_price: float
+    day_open: float
+    day_high: float
+    day_low: float
+    change_pct_day: float   # % change from open
+
+    # Delta since user's checkpoint
+    checkpoint_price: Optional[float] = None
+    seen_at: Optional[datetime] = None
+    delta_price: float = 0.0
+    delta_pct: float = 0.0      # % change since checkpoint
+
+    # Statistical signals
+    z_score: float = 0.0
+    volume_ratio: float = 0.0
+
+    # Structural breaks
+    broke_day_high: bool = False
+    broke_day_low: bool = False
+    broke_52w_high: bool = False
+    broke_52w_low: bool = False
+
+    # Attention
+    attention_tier: AttentionTier
+    rationale: str
+    signals_fired: list[str] = Field(default_factory=list)
+
+    # Feed metadata (per-symbol freshness)
+    feed_status: FeedStatus
+    feed_lag_ms: float
+    tick_quality: TickQuality
+    is_halted: bool = False
+    last_tick_time: Optional[datetime] = None
+
+
+class WatchlistResponse(BaseModel):
+    """
+    Response for GET /api/watchlist.
+    Includes per-row data plus global feed metadata headers.
+    """
+    user_id: str
+    items: list[WatchlistRow]
+    feed_status: FeedStatus
+    feed_lag_ms: float
+    total_count: int
+    high_attention_count: int
+    moderate_attention_count: int
+    generated_at: datetime
+
+
+class CatchUpItem(BaseModel):
+    """
+    A single item in the catch-up panel — instruments with MODERATE/HIGH
+    attention that have meaningfully changed since the user's last checkpoint.
+    """
+    symbol: str
+    name: str
+    sector: str = ""
+    current_price: float
+    checkpoint_price: float
+    delta_pct: float
+    z_score: float
+    volume_ratio: float
+    attention_tier: AttentionTier
+    rationale: str
+    signals_fired: list[str] = Field(default_factory=list)
+    broke_52w_high: bool = False
+    broke_52w_low: bool = False
+    feed_status: FeedStatus
+    tick_quality: TickQuality
+    seen_at: Optional[datetime] = None
+
+
+class CatchUpResponse(BaseModel):
+    """
+    Response for GET /api/watchlist/catch-up — the core differentiator endpoint.
+    """
+    user_id: str
+    high_attention: list[CatchUpItem]
+    moderate_attention: list[CatchUpItem]
+    total_flagged: int
+    last_checkpoint_at: Optional[datetime]
+    generated_at: datetime
+
+
+class CheckpointWriteResponse(BaseModel):
+    """Response for POST /api/watchlist/checkpoint."""
+    user_id: str
+    symbols_updated: list[str]
+    checkpointed_at: datetime
+    message: str
+
+
+class SymbolSearchResult(BaseModel):
+    """Result for symbol lookup (used in the Add Symbol modal)."""
+    symbol: str
+    name: str
+    sector: str = ""
+    base_price: float
+    is_tracked: bool = False   # True if symbol is tracked by the active feed

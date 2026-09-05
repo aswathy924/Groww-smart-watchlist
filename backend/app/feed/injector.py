@@ -44,6 +44,12 @@ class FeedInjector:
             duration = duration_seconds or 10
             return await self._inject_feed_delay(duration)
 
+        elif anomaly_type == AnomalyType.TRADING_HALT:
+            return self._inject_trading_halt(sym)
+
+        elif anomaly_type == AnomalyType.RESUME_TRADING:
+            return self._inject_resume_trading(sym)
+
         else:
             raise ValueError(f"Unknown anomaly_type: {anomaly_type!r}")
 
@@ -149,5 +155,31 @@ class FeedInjector:
             f"Feed delay injected: all tick emission paused for {duration_seconds}s. "
             f"Feed will transition LIVE → DELAYED → STALE during the pause."
         )
+        logger.info(msg)
+        return msg
+
+    def _inject_trading_halt(self, symbol: str) -> str:
+        """Halt trading for the target symbol."""
+        from app.feed.hybrid_feed import HybridFeed
+        if isinstance(self._feed, HybridFeed):
+            self._feed.inject_trading_halt(symbol, duration_seconds=30)
+        else:
+            state = self._feed.get_latest_tick(symbol)
+            if state:
+                state.is_halted = True
+        msg = f"Circuit breaker triggered for {symbol}. Price updates paused for 30s cooling window (auto-resumes)."
+        logger.info(msg)
+        return msg
+
+    def _inject_resume_trading(self, symbol: str) -> str:
+        """Resume trading for the target symbol."""
+        from app.feed.hybrid_feed import HybridFeed
+        if isinstance(self._feed, HybridFeed):
+            self._feed.inject_resume_trading(symbol)
+        else:
+            state = self._feed.get_latest_tick(symbol)
+            if state:
+                state.is_halted = False
+        msg = f"Trading resumed for {symbol}. Normal tick flow restored."
         logger.info(msg)
         return msg
