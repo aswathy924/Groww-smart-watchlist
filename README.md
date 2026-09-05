@@ -114,6 +114,37 @@ The system includes a dedicated live testing sandbox built into the top navigati
 
 ---
 
+## Frontend & User Experience Capabilities
+
+The frontend provides an intuitive, high-performance interface built with **React 18 & Tailwind CSS**, focusing on clear data presentation, personalized tracking, and zero clutter:
+
+1. **Multi-Trader & Persona Management**
+   - **Independent Trader Profiles**: Supports multiple distinct traders, allowing users to switch between different trading personas or strategies.
+   - **Isolated Watchlists & Checkpoints**: Each trader maintains their own personal watchlist, customized stock subscriptions, viewing timestamps, and alert histories without cross-account interference.
+
+2. **Personalized "Catch-Up Mode" & State Synchronization**
+   - **Smart Market Summaries**: When a trader returns to the platform after stepping away, the dashboard highlights only the stocks that moved unusually during their absence.
+   - **Plain-English Explanations**: Every alert includes a clear, concise rationale (such as unusual price surges or sudden volume spikes) so traders can understand what happened in seconds.
+   - **1-Click "Mark as Seen"**: Traders can synchronize their state at any time, saving the latest price snapshot as their new baseline and returning the dashboard to resting live mode.
+
+3. **Dynamic Watchlist Customization**
+   - **Stock Search & Addition**: Traders can search and add any stock from the market universe with instant baseline data initialization.
+   - **Quick Removal**: Easily remove stocks from personal watchlists with real-time UI updates.
+
+4. **Visual Trends & Stock Deep-Dives**
+   - **Live Trend Sparklines**: Mini intraday charts directly in the table show price direction and momentum at a glance.
+   - **Detailed Telemetry Drawer**: Clicking any stock row reveals comprehensive metrics including statistical volatility ($Z$-score), volume surge ratios, intraday high/low ranges, and 52-week price boundaries.
+
+5. **Adaptive Layout & Theme Customization**
+   - **Fluid Auto-Scaling**: The layout dynamically adjusts proportions and font sizing across compact screens, laptops, and ultra-wide desktop monitors.
+   - **Dark & Light Mode**: Built-in theme switcher with automatic preference persistence.
+   - **Live Connection Telemetry**: Real-time status badge in the header displays live feed connectivity (`LIVE`, `DELAYED`, or `STALE`) with millisecond lag tracking.
+
+6. **Interactive Simulation Sandbox**
+   - Built-in simulation drawer enabling traders and reviewers to trigger live market scenarios (price breakouts, volume surges, bad data filtering, and inactivity gaps) to see how the system responds in real time.
+
+---
+
 ## Quickstart & Local Evaluation
 
 ### Option 1: One-Command Docker Compose (Recommended)
