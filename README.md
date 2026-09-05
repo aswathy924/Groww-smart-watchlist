@@ -25,39 +25,39 @@ The **Smart Market Watchlist** solves this through a high-throughput **Statistic
 ### Why Naive Percentage Tracking Fails
 A naive `+2.0%` price change is **not** equally significant across different assets:
 - For **Tata Motors** ($\sigma = 32\%$, high-beta auto stock), a $\pm2\%$ intraday move is routine Brownian diffusion.
-- For **Nestle India** ($\sigma = 16\%$, low-beta FMCG stock), a $+2\%$ jump is a **3.5σ statistical shock** indicative of major institutional accumulation or material news.
+- For **Nestle India** ($\sigma = 16\%$, low-beta FMCG stock), a $+2\%$ jump is a **3.5σ statistical shock** indicative of major institutional accumulation or material news.### The Delta Engine Model
 
-### The Delta Engine Model
+```mermaid
+flowchart TD
+    subgraph INGEST["1. Market Telemetry Stream"]
+        TICK["Raw Market Tick (LTP, Volume, Day Range)"]
+        FILTER{"Resilience Shield<br/>(Out-of-Order & Bad-Tick Filter)"}
+        TICK --> FILTER
+    end
 
-```
-                    ┌────────────────────────────────────────────────────────┐
-                    │                    Market Feed Tick                    │
-                    └──────────────────────────┬─────────────────────────────┘
-                                               │
-                                               ▼
-                    ┌────────────────────────────────────────────────────────┐
-                    │      Personalized Checkpoint Comparison (P - P_seen)   │
-                    └──────────────────────────┬─────────────────────────────┘
-                                               │
-                        ┌──────────────────────┴──────────────────────┐
-                        ▼                                             ▼
-         ┌─────────────────────────────┐               ┌─────────────────────────────┐
-         │     Z-Score Volatility      │               │     Volume Surge Ratio      │
-         │  Z = |ΔP| / (σ_daily * √T)  │               │   VR = Vol / (AvgVol * t/T) │
-         └──────────────┬──────────────┘               └──────────────┬──────────────┘
-                        │                                             │
-                        └──────────────────────┬──────────────────────┘
-                                               │
-                                               ▼
-                    ┌────────────────────────────────────────────────────────┐
-                    │   Structural Breaks (52W High/Low, Intraday H/L Touch) │
-                    └──────────────────────────┬─────────────────────────────┘
-                                               │
-                                               ▼
-                    ┌────────────────────────────────────────────────────────┐
-                    │           Attention Tier & Plain-English AI Rationale  │
-                    │         🔴 HIGH  |  🟡 MODERATE  |  🟢 NORMAL          │
-                    └────────────────────────────────────────────────────────┘
+    subgraph ENGINE["2. Personalized Delta Engine (Compute-on-Read)"]
+        CHK["User Checkpoint Snapshot (P_seen, T_seen)"]
+        FILTER -->|Clean State| CALC["Delta Comparator<br/>ΔP = P_current - P_seen<br/>Δt = Now - T_seen"]
+        CHK --> CALC
+        
+        CALC --> ZSCORE["Time-Scaled Volatility<br/>Z = |ΔP| / (σ_daily · √Δt)"]
+        CALC --> VOL["Volume Surge Ratio<br/>VR = Vol / (AvgVol · t/T)"]
+        CALC --> BOUND["Boundary Breach Check<br/>(52W High/Low, Intraday Touch)"]
+    end
+
+    subgraph ATTENTION["3. Intelligent Prioritization & Rationale"]
+        ZSCORE --> DECIDE{"Priority Classifier"}
+        VOL --> DECIDE
+        BOUND --> DECIDE
+        
+        DECIDE -->|Z ≥ 2.0σ or VR ≥ 2.5x| HIGH["🔴 HIGH PRIORITY<br/>Urgent Breakout Alert"]
+        DECIDE -->|1.0σ ≤ Z < 2.0σ or VR ≥ 1.5x| MOD["🟡 MODERATE<br/>Notable Momentum Move"]
+        DECIDE -->|Z < 1.0σ & Normal Vol| NORM["🟢 NORMAL RANGE<br/>Suppressed Alert Noise"]
+        
+        HIGH --> RATIONALE["Plain-English Quantitative Rationale"]
+        MOD --> RATIONALE
+        NORM --> RATIONALE
+    end
 ```
 
 #### 1. Time-Scaled Volatility & Z-Score
@@ -92,8 +92,8 @@ Detects transitions across psychological market levels that occurred **since the
 
 | Decision | Chosen Architecture | Alternative Considered | Engineering Trade-Off Justification |
 | :--- | :--- | :--- | :--- |
-| **Delta Computation** | **Compute-on-Read ($\mathcal{O}(K)$)** | Precomputed Push-on-Write ($\mathcal{O}(N \times K)$) | In a system with $1,000,000$ users, computing deltas on tick ingestion produces massive write amplification. By evaluating deltas on read ($\approx 10\text{--}20$ watchlist items per user), we achieve sub-millisecond query latencies and 0 background write overhead. |
-| **Attention Logic** | **Deterministic Mathematics** | Black-Box LLM in Critical Path | High-frequency trading telemetry demands sub-millisecond execution, zero token cost, zero hallucination risk, and mathematical auditability. LLM-style plain English rationales are generated via a deterministic, rule-based string matrix. |
+| **Delta Computation** | **Compute-on-Read ($\mathcal{O}(K)$)** | Precomputed Push-on-Write ($\mathcal{O}(N \times K)$) | In a system with 1,000,000 users, computing deltas on tick ingestion produces massive write amplification. By evaluating deltas on read ($\approx 10\text{--}20$ watchlist items per user), we achieve sub-millisecond query latencies and 0 background write overhead. |
+| **Attention Logic** | **Deterministic Mathematics** | Black-Box LLM in Critical Path | High-frequency trading telemetry demands sub-millisecond execution, zero token cost, zero hallucination risk, and mathematical auditability. Plain English rationales are generated via a deterministic, rule-based quantitative matrix. |
 | **Market Feed Architecture** | **In-Memory Lock-Free Snapshot + GBM Hybrid** | Polling REST / Heavy DB Writes | Ticks stream into atomic in-memory state records with nanosecond read access. SQLite WAL mode handles persistence for user checkpoints without blocking concurrent read workers. |
 | **Resilience Model** | **Self-Healing Bad-Tick Filter** | Immediate Hard Rejection Only | Corrupt ticks (>15% jump without depth) are tagged `UNVERIFIED_DATA` and suppressed from alerting. Subsequent ticks restore the true price (`last_valid_price`), ensuring self-healing state consistency. |
 
@@ -101,32 +101,48 @@ Detects transitions across psychological market levels that occurred **since the
 
 ## Scaling to 1,000,000 Concurrent Users
 
-```
-                                      [ 1,000,000 Active Clients ]
-                                                   │
-                                                   ▼
-                                      [ Anycast CDN / Cloudflare ]
-                                                   │
-                                                   ▼
-                                  [ NGINX Edge Load Balancers (L7) ]
-                                                   │
-                                                   ▼
-                       ┌───────────────────────────────────────────────────────┐
-                       │       Stateless FastAPI Microservices (Autoscaled)    │
-                       └───────────────────────────┬───────────────────────────┘
-                                                   │
-                  ┌────────────────────────────────┴────────────────────────────────┐
-                  ▼                                                                 ▼
-      ┌───────────────────────┐                                         ┌───────────────────────┐
-      │   Redis Cluster L1    │                                         │   ScyllaDB / Postgres │
-      │  In-Memory Tick Cache │                                         │    User Checkpoints   │
-      │  (Sub-millisecond)    │                                         │  (Read-Replica Pool)  │
-      └───────────────────────┘                                         └───────────────────────┘
+```mermaid
+flowchart TB
+    subgraph CLIENTS["Edge & Client Layer (1,000,000 Concurrent Traders)"]
+        USER["Traders & Quants (Web / Mobile App)"]
+        CDN["Anycast Cloudflare CDN (Static Assets & WAF)"]
+        USER --> CDN
+    end
+
+    subgraph GATEWAY["API Gateway & Ingress (200k QPS)"]
+        LB["NGINX L7 Load Balancer Cluster"]
+        CDN --> LB
+    end
+
+    subgraph SERVICES["FastAPI Stateless Microservices (Autoscaled Pods)"]
+        API1["FastAPI Worker 1"]
+        API2["FastAPI Worker 2"]
+        APIN["FastAPI Worker N..."]
+        LB --> API1
+        LB --> API2
+        LB --> APIN
+    end
+
+    subgraph CACHE["L1 In-Memory Market Feed Cache"]
+        REDIS[("Redis Cluster L1<br/>In-Memory Market Snapshot<br/>(Sub-0.1ms Lookup)")]
+        FEED["Market Feed Engine<br/>(24/7 Tick Engine)"]
+        FEED --> REDIS
+        API1 -->|Read LTP| REDIS
+        API2 -->|Read LTP| REDIS
+        APIN -->|Read LTP| REDIS
+    end
+
+    subgraph STORAGE["Persistent Storage Tier"]
+        DB[("Distributed Database<br/>(PostgreSQL / SQLite WAL Pool)<br/>User Checkpoints & Watchlists")]
+        API1 -->|Read/Write Checkpoints| DB
+        API2 -->|Read/Write Checkpoints| DB
+        APIN -->|Read/Write Checkpoints| DB
+    end
 ```
 
 ### System Sizing Calculations
-- **Active Users**: $1,000,000$ traders
-- **Average Watchlist Size**: 15 instruments ($15,000,000$ active subscriptions)
+- **Active Users**: 1,000,000 traders
+- **Average Watchlist Size**: 15 instruments (15,000,000 active subscriptions)
 - **Feed Ingestion Rate**: 50,000 ticks/sec across NSE/BSE universe
 - **Tick Cache Footprint**: $5,000 \text{ symbols} \times 128 \text{ bytes} \approx 640 \text{ KB}$ (easily fits in L1 CPU cache / Redis)
 - **Checkpoint Read Throughput**: $1,000,000 \text{ users} \times 0.2 \text{ req/sec} = 200,000 \text{ QPS}$
@@ -137,11 +153,11 @@ Detects transitions across psychological market levels that occurred **since the
 
 ## Production Resilience & Edge-Case Shield
 
-1. **Out-of-Order Packet Shield**: Rejects any tick where $\text{tick\_time} \le \text{last\_recorded\_time}$ to prevent clock-skew packet reversals.
-2. **Bad-Tick & Glitch Filter**: Ticks with $>15\%$ price divergence unsupported by order book volume are flagged `UNVERIFIED_DATA`, suppressed from user catch-up notifications, and prevented from poisoning checkpoints.
+1. **Out-of-Order Packet Shield**: Rejects any tick where `tick_time <= last_recorded_time` to prevent clock-skew packet reversals.
+2. **Bad-Tick & Glitch Filter**: Ticks with `> 15%` price divergence unsupported by order book volume are flagged `UNVERIFIED_DATA`, suppressed from user catch-up notifications, and prevented from poisoning checkpoints.
 3. **Self-Healing Recovery**: Upon receiving the next valid tick, instrument state automatically snaps back to `last_valid_price`.
-4. **Exchange Circuit Breaker & Auto-Cooling**: Symbol trading halts pause tick updates, render the purple `🛡️ Circuit Limit` badge, and automatically cool down after 30 seconds.
-5. **Feed Lag Telemetry**: Dynamic classification (`LIVE` $<2\text{s}$, `DELAYED` $2\text{--}15\text{s}$, `STALE` $>15\text{s}$) emitted via `X-Feed-Status` and `X-Feed-Lag-Ms` HTTP headers.
+4. **Exchange Circuit Breaker & Auto-Cooling**: Symbol trading halts pause tick updates, render the purple `Circuit Limit` badge, and automatically cool down after 30 seconds.
+5. **Feed Lag Telemetry**: Dynamic classification (`LIVE < 2s`, `DELAYED 2-15s`, `STALE > 15s`) emitted via `X-Feed-Status` and `X-Feed-Lag-Ms` HTTP headers.
 6. **Multi-Tab Concurrency**: Checkpoint writes execute atomic `INSERT ... ON CONFLICT DO UPDATE` (UPSERT) transactions, preventing race conditions across multiple open browser tabs.
 
 ---
