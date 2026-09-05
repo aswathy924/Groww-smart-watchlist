@@ -1,4 +1,4 @@
-# Multi-stage Python build for Groww Smart Watchlist Backend
+# Multi-stage Python build for Smart Market Watchlist Backend
 FROM python:3.11-slim AS builder
 
 WORKDIR /app

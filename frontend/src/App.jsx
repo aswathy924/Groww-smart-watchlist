@@ -134,7 +134,7 @@ export default function App() {
       />
 
       {/* Main Dashboard Body */}
-      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <main className="max-w-[1680px] w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Error notification */}
         {error && (
           <div className="bg-accent-red/10 border border-accent-red/25 text-accent-red text-xs px-4 py-3 rounded-2xl animate-fade-in flex items-center justify-between">
@@ -196,6 +196,7 @@ export default function App() {
         isOpen={sandboxOpen} 
         onClose={() => setSandboxOpen(false)} 
         currentUserId={userId}
+        watchlistSymbols={watchlist?.items?.map(i => i.symbol) || []}
       />
     </div>
   );

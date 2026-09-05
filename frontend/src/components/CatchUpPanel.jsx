@@ -30,7 +30,7 @@ export default function CatchUpPanel({
       <div
         key={item.symbol}
         onClick={() => onSelectStock && onSelectStock(item)}
-        className="group p-5 rounded-2xl bg-surface-800 border border-white/[0.08] hover:border-accent-green/40 hover:bg-surface-700/50 transition-all cursor-pointer shadow-card flex flex-col justify-between"
+        className="group p-5 rounded-2xl bg-surface-800 border border-themeborder-subtle hover:border-accent-green/40 hover:bg-surface-700/50 transition-all cursor-pointer shadow-card flex flex-col justify-between"
       >
         <div>
           {/* Card Top: Symbol + Price Delta */}
@@ -72,7 +72,7 @@ export default function CatchUpPanel({
         </div>
 
         {/* Card Bottom: Telemetry Signals */}
-        <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs text-text-muted">
+        <div className="pt-3 border-t border-themeborder-subtle flex items-center justify-between text-xs text-text-muted">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
               <Zap className="w-3 h-3 text-accent-yellow" />
@@ -94,7 +94,7 @@ export default function CatchUpPanel({
   };
 
   return (
-    <div className="bg-surface-850 border border-white/[0.08] rounded-2xl p-6 shadow-card space-y-4">
+    <div className="bg-surface-850 border border-themeborder-subtle rounded-2xl p-6 shadow-card space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -103,15 +103,15 @@ export default function CatchUpPanel({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-text-primary">What Changed Since Your Last Visit</h3>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-accent-yellow/10 text-accent-yellow font-semibold">
+              <h3 className="text-base font-bold text-text-primary">What Changed Since Your Last Visit</h3>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-accent-yellow/10 text-accent-yellow font-bold border border-accent-yellow/20">
                 {catchUpData.total_flagged} Actionable
               </span>
             </div>
-            <p className="text-xs text-text-muted">
-              {totalHigh > 0 && <span className="text-accent-red font-medium">{totalHigh} statistical breakouts (&gt;2σ)</span>}
+            <p className="text-xs sm:text-sm text-text-muted mt-0.5">
+              {totalHigh > 0 && <span className="text-accent-red font-bold">{totalHigh} statistical breakouts (&gt;2σ)</span>}
               {totalHigh > 0 && totalMod > 0 && <span> · </span>}
-              {totalMod > 0 && <span className="text-accent-yellow font-medium">{totalMod} volume & level breaches</span>}
+              {totalMod > 0 && <span className="text-accent-yellow font-bold">{totalMod} volume & level breaches</span>}
             </p>
           </div>
         </div>

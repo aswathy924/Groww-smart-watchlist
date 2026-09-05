@@ -56,7 +56,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     Manages the full startup and shutdown lifecycle of the application.
     """
     # STARTUP 
-    logger.info("=== Groww Smart Watchlist — Starting up ===")
+    logger.info("=== Smart Market Watchlist — Starting up ===")
 
     # 1. Initialise database tables
     logger.info("Initialising database (SQLite WAL mode)...")
@@ -87,7 +87,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     yield
 
     # SHUTDOWN 
-    logger.info("=== Groww Smart Watchlist — Shutting down ===")
+    logger.info("=== Smart Market Watchlist — Shutting down ===")
     await feed.stop()
     logger.info("Market feed stopped. Goodbye.")
 
@@ -97,7 +97,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 # ---------------------------------------------------------------------------
 
 app = FastAPI(
-    title="Groww Smart Watchlist API",
+    title="Smart Market Watchlist API",
     description=(
         "End-to-end resilient market watchlist engine that answers: "
         "'What has meaningfully changed since the user last checked?'\n\n"

@@ -5,19 +5,20 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: groww-smart-watchlist-backend
+    container_name: smart-watchlist-backend
     ports:
       - "8000:8000"
     environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - TICK_INTERVAL=1.0
       - PYTHONUNBUFFERED=1
-      - DATABASE_URL=sqlite+aiosqlite:///./watchlist.db
-      - FEED_MODE=HYBRID
     volumes:
-      - backend-data:/app
+      - backend-data:/app/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/system/feed-health"]
-      interval: 15s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
       timeout: 5s
       retries: 3
       start_period: 5s
@@ -26,7 +27,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: groww-smart-watchlist-frontend
+    container_name: smart-watchlist-frontend
     ports:
       - "5173:80"
     depends_on:

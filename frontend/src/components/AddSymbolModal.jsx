@@ -19,11 +19,11 @@ export default function AddSymbolModal({ isOpen, onClose, availableSymbols, onAd
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
       <div 
-        className="w-full max-w-lg bg-surface-800 border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-slide-up"
+        className="w-full max-w-lg bg-surface-800 border border-themeborder-subtle rounded-2xl shadow-2xl overflow-hidden animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.06] bg-surface-850">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-themeborder-subtle bg-surface-850">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-accent-green/10 flex items-center justify-center text-accent-green">
               <Sparkles className="w-4 h-4" />
@@ -50,7 +50,7 @@ export default function AddSymbolModal({ isOpen, onClose, availableSymbols, onAd
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by ticker (e.g. RELIANCE), company, or sector..."
-              className="w-full pl-10 pr-4 py-3 bg-surface-700 border border-white/10 rounded-xl text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-green/40 focus:ring-1 focus:ring-accent-green/20 transition-all"
+              className="w-full pl-10 pr-4 py-3 bg-surface-700 border border-themeborder-subtle rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-green/40 focus:ring-1 focus:ring-accent-green/20 transition-all"
               autoFocus
             />
           </div>
@@ -67,10 +67,10 @@ export default function AddSymbolModal({ isOpen, onClose, availableSymbols, onAd
             filtered.map(sym => (
               <div
                 key={sym.symbol}
-                className={`flex items-center justify-between p-3.5 rounded-xl border border-white/[0.04] transition-all ${
+                className={`flex items-center justify-between p-3.5 rounded-xl border border-themeborder-subtle transition-all ${
                   sym.is_tracked 
                     ? 'bg-surface-850/40 opacity-60' 
-                    : 'bg-surface-700/40 hover:bg-surface-700 hover:border-white/10'
+                    : 'bg-surface-700/40 hover:bg-surface-700 hover:border-themeborder-strong'
                 }`}
               >
                 <div className="flex items-center gap-3">

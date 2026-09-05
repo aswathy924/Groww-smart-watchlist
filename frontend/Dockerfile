@@ -1,4 +1,4 @@
-# Multi-stage build for Groww Smart Watchlist Frontend
+# Multi-stage build for Smart Market Watchlist Frontend
 FROM node:20-alpine AS builder
 
 WORKDIR /app

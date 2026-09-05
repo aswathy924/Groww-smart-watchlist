@@ -162,11 +162,11 @@ export default function WatchlistTable({
   };
 
   return (
-    <div className="bg-surface-800 border border-white/[0.06] rounded-2xl shadow-card overflow-hidden">
+    <div className="bg-surface-800 border border-themeborder-subtle rounded-2xl shadow-card overflow-hidden">
       {/* Table Toolbar */}
-      <div className="p-5 border-b border-white/[0.06] flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 sm:p-5 border-b border-themeborder-subtle flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         {/* Left: Filter Tabs */}
-        <div className="flex items-center gap-1 bg-surface-850 p-1 rounded-xl border border-white/5">
+        <div className="flex flex-wrap items-center gap-1 bg-surface-850 p-1 rounded-xl border border-themeborder-subtle">
           <button
             onClick={() => setFilterTier('ALL')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -219,7 +219,7 @@ export default function WatchlistTable({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search company or symbol..."
-              className="w-56 pl-9 pr-3 py-2 bg-surface-700 border border-white/10 rounded-xl text-xs text-text-primary placeholder-text-muted focus:outline-none focus:border-accent-green/40 focus:ring-1 focus:ring-accent-green/20 transition-all"
+              className="w-56 pl-9 pr-3 py-2 bg-surface-700 border border-themeborder-subtle rounded-xl text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-green/40 focus:ring-1 focus:ring-accent-green/20 transition-all"
             />
           </div>
 
@@ -237,62 +237,62 @@ export default function WatchlistTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-white/[0.06] text-[11px] font-semibold text-text-muted uppercase tracking-wider bg-surface-850/40">
+            <tr className="border-b border-themeborder-subtle text-xs font-bold text-text-secondary uppercase tracking-wider bg-surface-850/60">
               <th 
-                className="py-3.5 px-6 cursor-pointer hover:text-text-secondary select-none"
+                className="py-4 px-6 cursor-pointer hover:text-text-primary select-none"
                 onClick={() => handleSort('symbol')}
               >
                 <div className="flex items-center gap-1.5">
                   <span>Instrument</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th 
-                className="py-3.5 px-6 cursor-pointer hover:text-text-secondary select-none"
+                className="py-4 px-6 cursor-pointer hover:text-text-primary select-none"
                 onClick={() => handleSort('current_price')}
               >
                 <div className="flex items-center gap-1.5">
                   <span>LTP & Day Change</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
-              <th className="py-3.5 px-6 select-none">
+              <th className="py-4 px-6 select-none">
                 <span>Intraday Trend</span>
               </th>
               <th 
-                className="py-3.5 px-6 cursor-pointer hover:text-text-secondary select-none"
+                className="py-4 px-6 cursor-pointer hover:text-text-primary select-none"
                 onClick={() => handleSort('delta_pct')}
               >
                 <div className="flex items-center gap-1.5">
                   <span>Since Last Check</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th 
-                className="py-3.5 px-6 cursor-pointer hover:text-text-secondary select-none"
+                className="py-4 px-6 cursor-pointer hover:text-text-primary select-none"
                 onClick={() => handleSort('volume_ratio')}
               >
                 <div className="flex items-center gap-1.5">
                   <span>Volume Activity</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th 
-                className="py-3.5 px-6 cursor-pointer hover:text-text-secondary select-none"
+                className="py-4 px-6 cursor-pointer hover:text-text-primary select-none"
                 onClick={() => handleSort('attention_tier')}
               >
                 <div className="flex items-center gap-1.5">
                   <span>Attention Tier</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
-              <th className="py-3.5 px-6 text-right">Actions</th>
+              <th className="py-4 px-6 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.04]">
+          <tbody className="divide-y divide-themeborder-subtle/50">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-xs text-text-muted">
+                <td colSpan={7} className="py-12 text-center text-sm text-text-muted">
                   No stocks match your filter or search criteria.
                 </td>
               </tr>
@@ -305,33 +305,33 @@ export default function WatchlistTable({
                   <tr
                     key={item.symbol}
                     onClick={() => onSelectStock && onSelectStock(item)}
-                    className="hover:bg-surface-700/40 cursor-pointer transition-colors duration-150 group"
+                    className="hover:bg-surface-700/50 cursor-pointer transition-colors duration-150 group"
                   >
                     {/* Instrument */}
                     <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-surface-700 border border-white/5 flex items-center justify-center text-xs font-bold text-text-primary group-hover:border-accent-green/30 group-hover:text-accent-green transition-all">
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-10 h-10 rounded-xl bg-surface-700 border border-themeborder-subtle flex items-center justify-center text-sm font-bold text-text-primary group-hover:border-accent-green/40 group-hover:text-accent-green transition-all">
                           {item.symbol.slice(0, 2)}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-text-primary text-sm">{item.symbol}</span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-700 text-text-muted">
+                            <span className="font-bold text-text-primary text-base">{item.symbol}</span>
+                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-surface-700 text-text-muted border border-themeborder-subtle">
                               NSE
                             </span>
                           </div>
-                          <p className="text-xs text-text-muted truncate max-w-[150px]">{item.name}</p>
+                          <p className="text-xs sm:text-sm text-text-muted truncate max-w-[180px]">{item.name}</p>
                         </div>
                       </div>
                     </td>
 
                     {/* LTP & Day Change */}
                     <td className="py-4 px-6">
-                      <div className="font-bold text-text-primary text-sm tabular-nums">
+                      <div className="font-bold text-text-primary text-base tabular-nums">
                         {formatPrice(item.current_price)}
                       </div>
-                      <div className={`inline-flex items-center gap-0.5 text-xs font-semibold tabular-nums mt-0.5 ${isDayPositive ? 'price-up' : 'price-down'}`}>
-                        {isDayPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                      <div className={`inline-flex items-center gap-1 text-xs sm:text-sm font-bold tabular-nums mt-0.5 ${isDayPositive ? 'price-up' : 'price-down'}`}>
+                        {isDayPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                         {isDayPositive ? '+' : ''}{item.change_pct_day?.toFixed(2)}%
                       </div>
                     </td>
@@ -350,28 +350,26 @@ export default function WatchlistTable({
 
                     {/* Since Last Check */}
                     <td className="py-4 px-6">
-                      <div className={`text-xs font-semibold tabular-nums ${isDeltaPositive ? 'text-accent-green' : 'text-accent-red'}`}>
+                      <div className={`text-sm font-bold tabular-nums ${isDeltaPositive ? 'text-accent-green' : 'text-accent-red'}`}>
                         {isDeltaPositive ? '+' : ''}{item.delta_pct?.toFixed(2)}%
                       </div>
-                      <div className="text-[11px] text-text-muted mt-0.5 flex items-center gap-1.5">
-                        <span>Z: {item.z_score !== undefined ? `${item.z_score.toFixed(1)}σ` : '--'}</span>
+                      <div className="text-xs text-text-muted mt-0.5 flex items-center gap-1.5">
+                        <span>Z: <strong className="text-text-primary">{item.z_score !== undefined ? `${item.z_score.toFixed(1)}σ` : '--'}</strong></span>
                         {item.z_score > 2.0 && (
-                          <span className="text-accent-yellow font-medium">⚡ Breakout</span>
+                          <span className="text-accent-yellow font-bold">⚡ Breakout</span>
                         )}
                       </div>
                     </td>
                     {/* Volume Activity */}
                     <td className="py-4 px-6">
-                      <div className="text-xs font-semibold text-text-primary tabular-nums">
+                      <div className="text-sm font-bold text-text-primary tabular-nums">
                         {item.volume_ratio !== undefined ? `${item.volume_ratio.toFixed(2)}x` : '--'}
                       </div>
-                      <div className="text-[11px] text-text-muted mt-0.5">
+                      <div className="text-xs text-text-muted mt-0.5">
                         {item.volume_ratio >= 2.5 ? (
-                          <span className="text-accent-red font-medium">🔥 Heavy Surge</span>
-                        ) : item.volume_ratio >= 1.5 ? (
-                          <span className="text-accent-yellow font-medium">Above Avg</span>
+                          <span className="text-accent-red font-bold">🔥 Heavy Surge</span>
                         ) : (
-                          'Normal Session'
+                          <span className="text-text-muted">Standard</span>
                         )}
                       </div>
                     </td>

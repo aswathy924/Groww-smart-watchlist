@@ -2,6 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Theme Variables ─────────────────────────────────────────── */
+
+:root {
+  --color-bg-body: #F4F6F9;
+  --color-surface-950: #FFFFFF;
+  --color-surface-900: #F8FAFC;
+  --color-surface-850: #F1F5F9;
+  --color-surface-800: #FFFFFF;
+  --color-surface-700: #F1F5F9;
+  --color-surface-600: #E2E8F0;
+  --color-surface-500: #CBD5E1;
+  --color-surface-400: #94A3B8;
+
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
+
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.16);
+  --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+}
+
+.dark {
+  --color-bg-body: #0C0F17;
+  --color-surface-950: #080A0F;
+  --color-surface-900: #0C0F17;
+  --color-surface-850: #111520;
+  --color-surface-800: #151A27;
+  --color-surface-700: #1C2333;
+  --color-surface-600: #252F44;
+  --color-surface-500: #323D56;
+  --color-surface-400: #475569;
+
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
 /* ── Base styling ─────────────────────────────────────────────── */
 
 * {
@@ -18,10 +60,11 @@ html {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #0C0F17;
-  color: #F8FAFC;
+  background-color: var(--color-bg-body);
+  color: var(--color-text-primary);
   line-height: 1.5;
   min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────── */
@@ -36,12 +79,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #252F44;
+  background: var(--color-surface-600);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #323D56;
+  background: var(--color-surface-500);
 }
 
 /* ── Custom Utilities ─────────────────────────────────────────── */
@@ -68,8 +111,8 @@ body {
 
 .badge-normal {
   background: rgba(148, 163, 184, 0.08);
-  color: #94A3B8;
-  border: 1px solid rgba(148, 163, 184, 0.16);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--border-subtle);
 }
 
 .badge-suspect {

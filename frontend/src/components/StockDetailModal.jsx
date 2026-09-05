@@ -19,19 +19,19 @@ export default function StockDetailModal({ stock, isOpen, onClose, onMarkSeen })
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
       <div 
-        className="w-full max-w-xl bg-surface-800 border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-slide-up"
+        className="w-full max-w-xl bg-surface-800 border border-themeborder-subtle rounded-2xl shadow-2xl overflow-hidden animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.06] bg-surface-850">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-themeborder-subtle bg-surface-850">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-surface-700 border border-white/10 flex items-center justify-center text-sm font-bold text-accent-green">
+            <div className="w-10 h-10 rounded-xl bg-surface-700 border border-themeborder-subtle flex items-center justify-center text-sm font-bold text-accent-green">
               {stock.symbol.slice(0, 2)}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold text-text-primary">{stock.symbol}</h2>
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-surface-700 text-text-secondary border border-white/5">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-surface-700 text-text-secondary border border-themeborder-subtle">
                   NSE
                 </span>
               </div>
@@ -50,7 +50,7 @@ export default function StockDetailModal({ stock, isOpen, onClose, onMarkSeen })
         {/* Content body */}
         <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
           {/* Price Header Banner */}
-          <div className="flex items-end justify-between bg-surface-700/50 p-4 rounded-xl border border-white/5">
+          <div className="flex items-end justify-between bg-surface-700/50 p-4 rounded-xl border border-themeborder-subtle">
             <div>
               <span className="text-xs text-text-muted block mb-1">Current Price (LTP)</span>
               <span className="text-2xl font-bold text-text-primary tabular-nums">
@@ -67,7 +67,7 @@ export default function StockDetailModal({ stock, isOpen, onClose, onMarkSeen })
           </div>
 
           {/* Plain-English Movement Rationale */}
-          <div className="p-4 rounded-xl bg-surface-700/40 border border-white/[0.08] space-y-2">
+          <div className="p-4 rounded-xl bg-surface-700/40 border border-themeborder-subtle space-y-2">
             <div className="flex items-center gap-2">
               <Activity className="w-4 h-4 text-accent-blue" />
               <h3 className="text-xs font-semibold text-text-primary uppercase tracking-wider">
@@ -96,7 +96,7 @@ export default function StockDetailModal({ stock, isOpen, onClose, onMarkSeen })
           {/* Statistical Breakdown Grid */}
           <div className="grid grid-cols-2 gap-3">
             {/* Z-Score */}
-            <div className="p-3.5 rounded-xl bg-surface-700/30 border border-white/5">
+            <div className="p-3.5 rounded-xl bg-surface-700/30 border border-themeborder-subtle">
               <div className="flex items-center gap-1.5 text-xs text-text-muted mb-1">
                 <Zap className="w-3.5 h-3.5 text-accent-yellow" />
                 <span>Z-Score Volatility</span>
@@ -110,7 +110,7 @@ export default function StockDetailModal({ stock, isOpen, onClose, onMarkSeen })
             </div>
 
             {/* Volume Ratio */}
-            <div className="p-3.5 rounded-xl bg-surface-700/30 border border-white/5">
+            <div className="p-3.5 rounded-xl bg-surface-700/30 border border-themeborder-subtle">
               <div className="flex items-center gap-1.5 text-xs text-text-muted mb-1">
                 <BarChart3 className="w-3.5 h-3.5 text-accent-blue" />
                 <span>Volume Ratio</span>
@@ -124,7 +124,7 @@ export default function StockDetailModal({ stock, isOpen, onClose, onMarkSeen })
             </div>
 
             {/* Last Checkpoint Price */}
-            <div className="p-3.5 rounded-xl bg-surface-700/30 border border-white/5">
+            <div className="p-3.5 rounded-xl bg-surface-700/30 border border-themeborder-subtle">
               <div className="flex items-center gap-1.5 text-xs text-text-muted mb-1">
                 <Clock className="w-3.5 h-3.5 text-text-secondary" />
                 <span>Checkpoint Price</span>
@@ -138,7 +138,7 @@ export default function StockDetailModal({ stock, isOpen, onClose, onMarkSeen })
             </div>
 
             {/* Tick Integrity */}
-            <div className="p-3.5 rounded-xl bg-surface-700/30 border border-white/5">
+            <div className="p-3.5 rounded-xl bg-surface-700/30 border border-themeborder-subtle">
               <div className="flex items-center gap-1.5 text-xs text-text-muted mb-1">
                 <ShieldAlert className="w-3.5 h-3.5 text-accent-green" />
                 <span>Feed Integrity</span>
@@ -154,7 +154,7 @@ export default function StockDetailModal({ stock, isOpen, onClose, onMarkSeen })
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.06] bg-surface-850">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-themeborder-subtle bg-surface-850">
           <div className="text-xs text-text-muted">
             Attention Tier: <span className="font-semibold text-text-primary">{stock.attention_tier || 'NORMAL'}</span>
           </div>

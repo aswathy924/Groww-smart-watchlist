@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -11,31 +12,35 @@ export default {
       },
       colors: {
         surface: {
-          950: '#080A0F',   // darkest base
-          900: '#0C0F17',   // main app background
-          850: '#111520',   // elevated bg
-          800: '#151A27',   // primary card bg
-          700: '#1C2333',   // secondary card / hover
-          600: '#252F44',   // interactive / input bg
-          500: '#323D56',   // active borders
-          400: '#475569',   // subtle borders
+          950: 'var(--color-surface-950)',
+          900: 'var(--color-surface-900)',
+          850: 'var(--color-surface-850)',
+          800: 'var(--color-surface-800)',
+          700: 'var(--color-surface-700)',
+          600: 'var(--color-surface-600)',
+          500: 'var(--color-surface-500)',
+          400: 'var(--color-surface-400)',
         },
         accent: {
-          green:  '#00D09C', // Groww signature green
+          green:  '#00D09C', // Emerald accent
           red:    '#FF5C5C', // Soft coral red
           yellow: '#FDBA2D', // Warm amber gold
           blue:   '#38BDF8', // Sky cyan
           purple: '#A78BFA', // Violet
         },
         text: {
-          primary:   '#F8FAFC',
-          secondary: '#94A3B8',
-          muted:     '#64748B',
+          primary:   'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          muted:     'var(--color-text-muted)',
+        },
+        themeborder: {
+          subtle: 'var(--border-subtle)',
+          strong: 'var(--border-strong)',
         }
       },
       boxShadow: {
-        'card': '0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -1px rgba(0, 0, 0, 0.3)',
-        'card-hover': '0 8px 30px -4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 208, 156, 0.08)',
+        'card': 'var(--card-shadow)',
+        'card-hover': '0 8px 30px -4px rgba(0, 0, 0, 0.15), 0 0 15px rgba(0, 208, 156, 0.08)',
         'glow-green': '0 0 25px rgba(0, 208, 156, 0.2)',
         'glow-red': '0 0 25px rgba(255, 92, 92, 0.2)',
       },

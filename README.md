@@ -1,26 +1,26 @@
-# 📈 Groww Smart Watchlist — Intelligent Market Delta Engine
+# Smart Market Watchlist — Intelligent Market Delta Engine
 
-> **Code, by Groww 2026** — *Real-time Market Telemetry, Statistical Volatility Delta Engine & Intelligent Attention Prioritization.*
+> *Real-time Market Telemetry, Statistical Volatility Delta Engine & Intelligent Attention Prioritization.*
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![React](https://img.shields.io/badge/React-18.0+-61DAFB.svg?logo=react&logoColor=black)](https://reactjs.org)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4+-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![Tests](https://img.shields.io/badge/Tests-15%2F15%20Passed-00D09C.svg)](https://pytest.org)
+[![Tests](https://img.shields.io/badge/Tests-16%2F16%20Passed-00D09C.svg)](https://pytest.org)
 [![Docker](https://img.shields.io/badge/Docker-Multi--stage-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com)
 
 ---
 
-## 🎯 Executive Summary & The Core Problem
+## Executive Summary & The Core Problem
 
 Traditional retail watchlists are passive tabular feeds that bombard traders with overwhelming raw tick updates. When a user opens their app after 2 hours, they are greeted by hundreds of flickering green and red numbers without answering the one question that truly matters:
 
 > **"What has meaningfully changed since I last checked, and what deserves my attention right now?"**
 
-The **Groww Smart Watchlist** solves this through a high-throughput **Statistical Delta Engine**. Instead of relying on naive percentage changes or static alerts, the system tracks each user's personalized interaction checkpoints, dynamically scales instrument volatility over elapsed time, and calculates **Z-score anomalies**, **session volume surges**, and **structural boundary breaches** to surface high-signal, prioritized market intelligence.
+The **Smart Market Watchlist** solves this through a high-throughput **Statistical Delta Engine**. Instead of relying on naive percentage changes or static alerts, the system tracks each user's personalized interaction checkpoints, dynamically scales instrument volatility over elapsed time, and calculates **Z-score anomalies**, **session volume surges**, and **structural boundary breaches** to surface high-signal, prioritized market intelligence.
 
 ---
 
-## 📐 The Mathematics of "Meaningful Change"
+## The Mathematics of "Meaningful Change"
 
 ### Why Naive Percentage Tracking Fails
 A naive `+2.0%` price change is **not** equally significant across different assets:
@@ -88,7 +88,7 @@ Detects transitions across psychological market levels that occurred **since the
 
 ---
 
-## ⚡ Key Engineering Decisions & Trade-Offs
+## Key Engineering Decisions & Trade-Offs
 
 | Decision | Chosen Architecture | Alternative Considered | Engineering Trade-Off Justification |
 | :--- | :--- | :--- | :--- |
@@ -99,7 +99,7 @@ Detects transitions across psychological market levels that occurred **since the
 
 ---
 
-## 🚀 Scaling to 1,000,000 Concurrent Users
+## Scaling to 1,000,000 Concurrent Users
 
 ```
                                       [ 1,000,000 Active Clients ]
@@ -135,7 +135,7 @@ Detects transitions across psychological market levels that occurred **since the
 
 ---
 
-## 🛡️ Production Resilience & Edge-Case Shield
+## Production Resilience & Edge-Case Shield
 
 1. **Out-of-Order Packet Shield**: Rejects any tick where $\text{tick\_time} \le \text{last\_recorded\_time}$ to prevent clock-skew packet reversals.
 2. **Bad-Tick & Glitch Filter**: Ticks with $>15\%$ price divergence unsupported by order book volume are flagged `UNVERIFIED_DATA`, suppressed from user catch-up notifications, and prevented from poisoning checkpoints.
@@ -146,28 +146,28 @@ Detects transitions across psychological market levels that occurred **since the
 
 ---
 
-## 🧪 Evaluator Sandbox (Deterministic Anomaly Injection)
+## Evaluator Sandbox (Deterministic Anomaly Injection)
 
-The system includes a dedicated live testing sandbox built into the top navigation bar (`[ 🧪 Simulate Edge Cases ]`):
+The system includes a dedicated live testing sandbox built into the top navigation bar (`[ Simulate Edge Cases ]`):
 
 | Anomaly Scenario | Simulated Market Event | Expected System Behavior |
 | :--- | :--- | :--- |
 | **Price Breakout** | $+6.0\%$ instantaneous price jump | Escalates to **HIGH Attention Alert** ($Z > 2.0\sigma$) in Catch-Up panel. |
 | **Volume Surge** | $4.0\times$ volume explosion | Escalates to **HIGH/MODERATE Attention** with Plain-English volume rationale. |
 | **Bad-Tick Anomaly** | $+20\%$ anomalous spike without depth | Tagged `UNVERIFIED_DATA`, suppressed from Catch-Up, self-heals next tick. |
-| **Exchange Circuit Limit** | Upper/lower circuit limit trigger | Freezes updates, displays `🛡️ Circuit Limit` badge, auto-resumes after 30s. |
+| **Exchange Circuit Limit** | Upper/lower circuit limit trigger | Freezes updates, displays ` Circuit Limit` badge, auto-resumes after 30s. |
 | **Feed Disruption** | 10s upstream network packet delay | Status transitions `LIVE` $\rightarrow$ `DELAYED` $\rightarrow$ `STALE` with yellow/red banner. |
 
 ---
 
-## 🚦 Quickstart & Local Evaluation
+## Quickstart & Local Evaluation
 
 ### Option 1: One-Command Docker Compose (Recommended)
 
 ```bash
 # Clone the repository
-git clone https://github.com/aswathy924/Groww-smart-watchlist.git
-cd Groww-smart-watchlist
+git clone <repository-url>
+cd smart-watchlist
 
 # Boot the entire stack (Backend + Frontend + Nginx)
 docker compose up --build
@@ -203,7 +203,7 @@ npm run dev
 
 ---
 
-## 🧪 Running Automated Test Suite
+## Running Automated Test Suite
 
 The test suite covers statistical math, volume ratios, out-of-order rejection, bad-tick suppression, checkpoint transitions, and API integration:
 
@@ -238,10 +238,10 @@ tests/test_resilience.py::test_trading_halt_suppresses_alerts PASSED     [100%]
 
 ---
 
-## 🏛️ Project Directory Layout
+## Project Directory Layout
 
 ```
-Groww-smart-watchlist/
+smart-watchlist/
 ├── docker-compose.yml              # Multi-container orchestration
 ├── README.md                       # Architectural documentation & evaluation guide
 ├── backend/
@@ -274,7 +274,7 @@ Groww-smart-watchlist/
     ├── Dockerfile                  # Multi-stage Node + Nginx container
     ├── nginx.conf                  # Nginx proxy configuration
     ├── package.json
-    ├── tailwind.config.js          # Groww dark-theme design tokens
+    ├── tailwind.config.js          # Dark-theme design tokens
     └── src/
         ├── App.jsx                 # Primary application dashboard
         ├── api/client.js           # Axios API client & error interceptors
@@ -289,11 +289,3 @@ Groww-smart-watchlist/
 ```
 
 ---
-
-## 🏆 Summary of Features Delivered
-
-- [x] **Phase 1: Ingestion & Market Feed Engine** (24/7 Geometric Brownian Motion + Jump Diffusion, 5-paise quantization, realistic pacing).
-- [x] **Phase 2: Delta Engine & Checkpoint API** ($Z$-score scaling $\sigma\sqrt{T}$, Volume Surge $VR$, structural breakouts, plain-English rationales).
-- [x] **Phase 3: Frontend Experience** (Deep matte charcoal `#0C0F17` UI, Groww green `#00D09C`, responsive table, modal telemetry).
-- [x] **Phase 4: Resilience & Edge-Case Shield** (Out-of-order rejection, `UNVERIFIED_DATA` bad-tick filter, circuit breaker auto-cooling, atomic SQLite WAL UPSERTs).
-- [x] **Phase 5: Testing, Dockerization & Documentation** (15/15 `pytest` suite, multi-stage Docker builds, `docker-compose.yml`, complete architectural defense).
