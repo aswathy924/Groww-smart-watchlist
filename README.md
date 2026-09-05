@@ -214,25 +214,26 @@ python -m pytest -v
 
 ```text
 ============================= test session starts =============================
-collected 15 items
+collected 16 items
 
 tests/test_api_endpoints.py::test_get_watchlist_endpoint PASSED          [  6%]
-tests/test_api_endpoints.py::test_get_catch_up_endpoint PASSED           [ 13%]
-tests/test_api_endpoints.py::test_post_checkpoint_endpoint PASSED        [ 20%]
-tests/test_api_endpoints.py::test_add_and_remove_watchlist_item PASSED   [ 26%]
-tests/test_api_endpoints.py::test_feed_health_endpoint PASSED            [ 33%]
-tests/test_api_endpoints.py::test_inject_anomaly_endpoint PASSED         [ 40%]
-tests/test_delta_engine.py::test_delta_normal_price_noise PASSED         [ 46%]
-tests/test_delta_engine.py::test_delta_statistical_breakout_high_zscore PASSED [ 53%]
-tests/test_delta_engine.py::test_delta_volume_surge_elevated_attention PASSED [ 60%]
-tests/test_delta_engine.py::test_delta_52w_high_structural_breakout PASSED [ 66%]
-tests/test_delta_engine.py::test_delta_bootstrap_for_new_user PASSED     [ 73%]
-tests/test_resilience.py::test_out_of_order_tick_rejected PASSED         [ 80%]
-tests/test_resilience.py::test_bad_tick_tagged_and_suppressed PASSED     [ 86%]
+tests/test_api_endpoints.py::test_get_catch_up_endpoint PASSED           [ 12%]
+tests/test_api_endpoints.py::test_post_checkpoint_endpoint PASSED        [ 18%]
+tests/test_api_endpoints.py::test_add_and_remove_watchlist_item PASSED   [ 25%]
+tests/test_api_endpoints.py::test_feed_health_endpoint PASSED            [ 31%]
+tests/test_api_endpoints.py::test_inject_anomaly_endpoint PASSED         [ 37%]
+tests/test_api_endpoints.py::test_simulate_inactivity_endpoint PASSED    [ 43%]
+tests/test_delta_engine.py::test_delta_normal_price_noise PASSED         [ 50%]
+tests/test_delta_engine.py::test_delta_statistical_breakout_high_zscore PASSED [ 56%]
+tests/test_delta_engine.py::test_delta_volume_surge_elevated_attention PASSED [ 62%]
+tests/test_delta_engine.py::test_delta_52w_high_structural_breakout PASSED [ 68%]
+tests/test_delta_engine.py::test_delta_bootstrap_for_new_user PASSED     [ 75%]
+tests/test_resilience.py::test_out_of_order_tick_rejected PASSED         [ 81%]
+tests/test_resilience.py::test_bad_tick_tagged_and_suppressed PASSED     [ 87%]
 tests/test_resilience.py::test_bad_tick_self_healing_restoration PASSED  [ 93%]
 tests/test_resilience.py::test_trading_halt_suppresses_alerts PASSED     [100%]
 
-============================= 15 passed in 0.24s ==============================
+============================= 16 passed in 0.32s ==============================
 ```
 
 ---

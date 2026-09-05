@@ -128,6 +128,39 @@ export default function WatchlistTable({
     );
   };
 
+  const MiniSparkline = ({ dayOpen = 100, dayHigh = 105, dayLow = 95, currentPrice = 102, isPositive = true, symbol = '' }) => {
+    const min = Math.min(dayOpen, dayLow, currentPrice);
+    const max = Math.max(dayOpen, dayHigh, currentPrice);
+    const range = (max - min) || 1.0;
+    
+    const getY = (val) => Math.round(24 - ((val - min) / range) * 18);
+    
+    const yOpen = getY(dayOpen);
+    const yLow = getY(dayLow);
+    const yHigh = getY(dayHigh);
+    const yCurr = getY(currentPrice);
+    
+    const pathD = `M 2 ${yOpen} Q 18 ${yLow}, 36 ${(yLow + yHigh) / 2} T 70 ${yCurr}`;
+    const strokeColor = isPositive ? '#00D09C' : '#FF5C5C';
+    const gradId = `spark-${symbol}-${isPositive ? 'up' : 'down'}`;
+
+    return (
+      <div className="w-20 h-7 flex items-center justify-center">
+        <svg className="w-full h-full overflow-visible" viewBox="0 0 74 28">
+          <defs>
+            <linearGradient id={gradId} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={strokeColor} stopOpacity="0.25" />
+              <stop offset="100%" stopColor={strokeColor} stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+          <path d={`${pathD} L 70 28 L 2 28 Z`} fill={`url(#${gradId})`} />
+          <path d={pathD} fill="none" stroke={strokeColor} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="70" cy={yCurr} r="2.5" fill={strokeColor} />
+        </svg>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-surface-800 border border-white/[0.06] rounded-2xl shadow-card overflow-hidden">
       {/* Table Toolbar */}
@@ -223,6 +256,9 @@ export default function WatchlistTable({
                   <ArrowUpDown className="w-3 h-3" />
                 </div>
               </th>
+              <th className="py-3.5 px-6 select-none">
+                <span>Intraday Trend</span>
+              </th>
               <th 
                 className="py-3.5 px-6 cursor-pointer hover:text-text-secondary select-none"
                 onClick={() => handleSort('delta_pct')}
@@ -256,7 +292,7 @@ export default function WatchlistTable({
           <tbody className="divide-y divide-white/[0.04]">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-xs text-text-muted">
+                <td colSpan={7} className="py-12 text-center text-xs text-text-muted">
                   No stocks match your filter or search criteria.
                 </td>
               </tr>
@@ -300,6 +336,18 @@ export default function WatchlistTable({
                       </div>
                     </td>
 
+                    {/* Mini Sparkline Micro-Trend */}
+                    <td className="py-4 px-6">
+                      <MiniSparkline
+                        dayOpen={item.day_open || item.current_price}
+                        dayHigh={item.day_high || item.current_price}
+                        dayLow={item.day_low || item.current_price}
+                        currentPrice={item.current_price}
+                        isPositive={isDayPositive}
+                        symbol={item.symbol}
+                      />
+                    </td>
+
                     {/* Since Last Check */}
                     <td className="py-4 px-6">
                       <div className={`text-xs font-semibold tabular-nums ${isDeltaPositive ? 'text-accent-green' : 'text-accent-red'}`}>
@@ -312,7 +360,6 @@ export default function WatchlistTable({
                         )}
                       </div>
                     </td>
-
                     {/* Volume Activity */}
                     <td className="py-4 px-6">
                       <div className="text-xs font-semibold text-text-primary tabular-nums">
@@ -367,3 +414,4 @@ export default function WatchlistTable({
     </div>
   );
 }
+

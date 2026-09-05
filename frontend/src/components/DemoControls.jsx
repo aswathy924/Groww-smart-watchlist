@@ -1,16 +1,24 @@
 import { useState } from 'react';
 import {
   FlaskConical, TrendingUp, BarChart3, AlertTriangle, WifiOff,
-  Loader2, X, Sparkles, CheckCircle2, ShieldAlert
+  Loader2, X, Sparkles, CheckCircle2, ShieldAlert, History, Clock
 } from 'lucide-react';
-import { injectAnomaly } from '../api/client';
+import { injectAnomaly, simulateInactivity } from '../api/client';
 
-export default function DemoControls({ isOpen, onClose }) {
+export default function DemoControls({ isOpen, onClose, currentUserId = 'trader_1' }) {
   const [loading, setLoading] = useState(null);
   const [lastResult, setLastResult] = useState(null);
   const [selectedSymbol, setSelectedSymbol] = useState('RELIANCE');
+  const [inactivityLoading, setInactivityLoading] = useState(false);
 
   const symbols = ['RELIANCE', 'TCS', 'INFY', 'HDFCBANK', 'TATAMOTORS', 'SBIN', 'BAJFINANCE'];
+
+  const timeOptions = [
+    { label: '15 Mins', minutes: 15, desc: 'Micro drift (tight σ)' },
+    { label: '2 Hours', minutes: 120, desc: 'Mid-session (σ√t scaled)' },
+    { label: '1 Day', minutes: 1440, desc: 'Full trading day (1.0σ baseline)' },
+    { label: '3 Days', minutes: 4320, desc: 'Multi-day absence (wide σ cone)' },
+  ];
 
   const actions = [
     {
@@ -73,6 +81,18 @@ export default function DemoControls({ isOpen, onClose }) {
     setLoading(null);
   };
 
+  const handleSimulateInactivity = async (minutes) => {
+    setInactivityLoading(true);
+    setLastResult(null);
+    try {
+      const res = await simulateInactivity(currentUserId, minutes);
+      setLastResult({ success: true, message: res.message });
+    } catch (err) {
+      setLastResult({ success: false, message: err.response?.data?.detail || err.message });
+    }
+    setInactivityLoading(false);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -94,7 +114,7 @@ export default function DemoControls({ isOpen, onClose }) {
                   Live Test
                 </span>
               </div>
-              <p className="text-xs text-text-muted">Inject deterministic anomalies into the 24/7 market stream</p>
+              <p className="text-xs text-text-muted">Inject deterministic anomalies & test mathematical time scaling</p>
             </div>
           </div>
 
@@ -107,7 +127,36 @@ export default function DemoControls({ isOpen, onClose }) {
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+        <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+          {/* Section 1: Time Machine Simulator */}
+          <div className="p-4 rounded-xl bg-surface-850 border border-white/5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <History className="w-4 h-4 text-accent-blue" />
+                <span className="text-xs font-bold text-text-primary uppercase tracking-wider">
+                  Time Machine (User Inactivity)
+                </span>
+              </div>
+              <span className="text-[11px] text-text-muted">Scales σ√Δt</span>
+            </div>
+            <p className="text-[11px] text-text-muted">
+              Rewind <span className="font-semibold text-text-primary">{currentUserId}</span>'s checkpoint to see how the mathematical volatility window scales over time:
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {timeOptions.map((t) => (
+                <button
+                  key={t.minutes}
+                  onClick={() => handleSimulateInactivity(t.minutes)}
+                  disabled={inactivityLoading}
+                  className="p-2.5 rounded-xl bg-surface-700 hover:bg-accent-blue/15 hover:border-accent-blue/30 border border-white/5 transition-all text-center group disabled:opacity-50"
+                >
+                  <div className="text-xs font-bold text-text-primary group-hover:text-accent-blue">{t.label}</div>
+                  <div className="text-[9px] text-text-muted truncate mt-0.5">{t.desc.split(' ')[0]}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Target Symbol Picker */}
           <div>
             <label className="text-xs font-semibold text-text-muted mb-2 block uppercase tracking-wider">
@@ -133,7 +182,7 @@ export default function DemoControls({ isOpen, onClose }) {
           {/* Action List */}
           <div className="space-y-2.5">
             <label className="text-xs font-semibold text-text-muted block uppercase tracking-wider">
-              Select Anomaly Scenario
+              Select Market Anomaly Scenario
             </label>
             {actions.map(action => {
               const Icon = action.icon;
@@ -142,7 +191,7 @@ export default function DemoControls({ isOpen, onClose }) {
                 <button
                   key={action.id}
                   onClick={() => handleInject(action.id)}
-                  disabled={loading !== null}
+                  disabled={loading !== null || inactivityLoading}
                   className={`w-full flex items-center justify-between p-4 rounded-xl border ${action.bgColor} ${action.borderColor} hover:brightness-110 disabled:opacity-40 transition-all text-left group`}
                 >
                   <div className="flex items-center gap-3.5">
@@ -163,7 +212,7 @@ export default function DemoControls({ isOpen, onClose }) {
             })}
           </div>
 
-          {/* Injection Response Toast */}
+          {/* Response Toast */}
           {lastResult && (
             <div className={`p-4 rounded-xl text-xs flex items-center gap-2.5 animate-slide-up ${
               lastResult.success

@@ -70,3 +70,17 @@ async def test_inject_anomaly_endpoint(async_client: AsyncClient):
     data = response.json()
     assert "message" in data
     assert "Price surge" in data["message"]
+
+@pytest.mark.asyncio
+async def test_simulate_inactivity_endpoint(async_client: AsyncClient):
+    """Test simulating time fast-forward / user inactivity."""
+    response = await async_client.post(
+        "/api/test/simulate-inactivity",
+        json={"user_id": "test_user", "minutes_ago": 120}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "simulated"
+    assert data["minutes_ago"] == 120
+    assert "symbols_updated" in data
+

@@ -195,6 +195,7 @@ export default function App() {
       <DemoControls 
         isOpen={sandboxOpen} 
         onClose={() => setSandboxOpen(false)} 
+        currentUserId={userId}
       />
     </div>
   );

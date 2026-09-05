@@ -3,9 +3,16 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.schemas import AnomalyInjectionRequest, AnomalyInjectionResponse
+from app.database import get_db
+from app.schemas import (
+    AnomalyInjectionRequest,
+    AnomalyInjectionResponse,
+    InactivitySimulationRequest,
+    InactivitySimulationResponse,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -75,3 +82,45 @@ async def inject_anomaly(
         anomaly_type=body.anomaly_type.value,
         message=message,
     )
+
+
+@router.post(
+    "/simulate-inactivity",
+    response_model=InactivitySimulationResponse,
+    summary="Simulate user inactivity / time fast-forward",
+    description=(
+        "Rewinds the user's checkpoints by N minutes to demonstrate "
+        "time-scaled volatility (sigma * sqrt(T)) and dynamic Z-score adjustments."
+    ),
+)
+async def simulate_inactivity(
+    body: InactivitySimulationRequest,
+    db: AsyncSession = Depends(get_db),
+) -> InactivitySimulationResponse:
+    from datetime import datetime, timezone, timedelta
+    from app.models import UserCheckpoint
+    from sqlalchemy import select
+
+    now = datetime.now(timezone.utc)
+    rewound_time = now - timedelta(minutes=body.minutes_ago)
+
+    result = await db.execute(
+        select(UserCheckpoint).where(UserCheckpoint.user_id == body.user_id)
+    )
+    cps = result.scalars().all()
+    symbols_updated = [cp.symbol for cp in cps]
+
+    for cp in cps:
+        cp.seen_at = rewound_time
+
+    await db.commit()
+
+    return InactivitySimulationResponse(
+        status="simulated",
+        user_id=body.user_id,
+        minutes_ago=body.minutes_ago,
+        new_seen_at=rewound_time,
+        symbols_updated=symbols_updated,
+        message=f"Fast-forwarded time: {body.user_id}'s last checkpoint rewound to {body.minutes_ago}m ago.",
+    )
+

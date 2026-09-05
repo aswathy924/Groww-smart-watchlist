@@ -35,8 +35,6 @@ export const getAvailableSymbols = (userId = 'trader_1') =>
 export const getFeedHealth = () =>
   api.get(`/api/system/feed-health`).then(r => r.data);
 
-// ── Test / Demo ──────────────────────────────────────────────
-
 export const injectAnomaly = (symbol, anomalyType, durationSeconds = null) =>
   api.post(`/api/test/inject-anomaly`, {
     symbol,
@@ -44,4 +42,11 @@ export const injectAnomaly = (symbol, anomalyType, durationSeconds = null) =>
     duration_seconds: durationSeconds,
   }).then(r => r.data);
 
+export const simulateInactivity = (userId = 'trader_1', minutesAgo = 120) =>
+  api.post(`/api/test/simulate-inactivity`, {
+    user_id: userId,
+    minutes_ago: minutesAgo,
+  }).then(r => r.data);
+
 export default api;
+

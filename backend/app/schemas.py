@@ -165,6 +165,22 @@ class AnomalyInjectionResponse(BaseModel):
     message: str
 
 
+class InactivitySimulationRequest(BaseModel):
+    """Request body for POST /api/test/simulate-inactivity."""
+    user_id: str = Field("trader_1", description="User identifier")
+    minutes_ago: int = Field(120, ge=1, le=10080, description="How many minutes ago user last checked")
+
+
+class InactivitySimulationResponse(BaseModel):
+    """Response confirming time rewinding for checkpoint testing."""
+    status: str = Field("simulated", description="Always 'simulated' on success")
+    user_id: str
+    minutes_ago: int
+    new_seen_at: datetime
+    symbols_updated: list[str]
+    message: str
+
+
 # ---------------------------------------------------------------------------
 # Generic API wrapper
 # ---------------------------------------------------------------------------
