@@ -140,6 +140,7 @@ app.include_router(test_router.router)        # Phase 1: /api/test/*
 # ---------------------------------------------------------------------------
 
 @app.get("/health", tags=["System"])
+@app.get("/api/health", tags=["System"])
 async def health_check():
     """
     Basic liveness probe.
