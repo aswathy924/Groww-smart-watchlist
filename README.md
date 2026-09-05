@@ -157,49 +157,7 @@ npm run dev
 
 ---
 
-## 🧪 Evaluator Sandbox & Interactive Simulation Guide
-
-The platform includes a dedicated **Evaluator Sandbox** (accessible via the floating **"⚡ Evaluator Sandbox"** button on the bottom-right of the dashboard) enabling judges to inject real-world market stress tests and verify system responses in real time.
-
-### 🎯 Test Scenarios for Evaluators
-
-#### 1. Statistical Breakout & High Z-Score Alert
-- **Action**: In the Evaluator Sandbox modal, select any tracked stock (e.g. `RELIANCE`) and click **"Inject Breakout (+6.5%)"**.
-- **Expected Behavior**:
-  - The stock's price surges by $+6.5\%$.
-  - The calculated $Z$-score jumps to $> 3.5\sigma$.
-  - A **High Priority Alert** immediately populates in the **Catch-Up Mode** banner with an AI rationale (e.g., *"Statistical Breakout detected: +6.5% move against 0.8% baseline volatility"*).
-
-#### 2. Institutional Volume Surge Spike
-- **Action**: Select a stock (e.g. `HDFCBANK`) and click **"Simulate 5x Volume Surge"**.
-- **Expected Behavior**:
-  - Volume surge ratio escalates to $> 4.5\times$ baseline.
-  - An **Attention Badge** (`VOL SURGE`) appears alongside the stock.
-  - The system tags elevated institutional volume without false-flagging pure price noise.
-
-#### 3. Bad-Tick Filter & Self-Healing Shield
-- **Action**: Select a stock (e.g. `TCS`) and click **"Inject Bad Tick (+40% Spike)"**.
-- **Expected Behavior**:
-  - The anomaly detector flags the $+40\%$ outlier as corrupted synthetic data ($>15\%$ threshold).
-  - The spurious tick is **suppressed from triggering fake breakout alerts**.
-  - On the next normal tick, baseline pricing self-heals without database corruption.
-
-#### 4. Extended Inactivity Gap (Catch-Up Mode)
-- **Action**: Click **"Simulate 4-Hour Inactivity Gap"**.
-- **Expected Behavior**:
-  - Simulates the user stepping away for 4 hours by shifting the checkpoint timestamp backward.
-  - The dashboard auto-refreshes into **Catch-Up Mode**, organizing all meaningful market shifts, price drift, and volume anomalies that occurred during the trader's absence.
-  - Clicking **"Mark as Seen"** acknowledges the state and updates the checkpoint timestamp.
-
-#### 5. Dynamic Persona Isolation & State Persistence
-- **Action**: Switch personas between **Trader 1 (Blue Chip Active)**, **Trader 2 (High Beta Tech)**, and **Trader 3 (Dividend Value)** in the top navigation bar.
-- **Expected Behavior**:
-  - Watchlist items, checkpoints, and Catch-Up alerts instantly isolate per trader.
-  - The Evaluator Sandbox dynamically filters available test instruments to match only the active persona's watchlist.
-
----
-
-## 🔬 Running Automated Test Suite
+## Running Automated Test Suite
 
 The test suite covers statistical math, volume ratios, out-of-order rejection, bad-tick suppression, checkpoint transitions, and API integration:
 
